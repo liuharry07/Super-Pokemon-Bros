@@ -12,7 +12,7 @@ public class World
   
   public static void run()
   {
-    Display display = new Display(500, 500);
+    Display display = new Display(1440, 900);
     display.run();
   }
   
@@ -28,33 +28,16 @@ public class World
     sprites = new ArrayList<Sprite>();
     double dir;
 
-    //normal sprites
-    sprites.add(new Sprite(Math.random() * (width - 50),
-                           Math.random() * (height - 50), 50, 50, "square.png"));
-    sprites.add(new Sprite(Math.random() * (width - 50),
-                           Math.random() * (height - 50), 50, 50, "square.png"));
+    //stage
+    sprites.add(new Sprite(300,
+                           200, 900, 600, "stage.png"));
+    //make a hitbox for stage
 
-    //mobile sprites
-   dir = Math.random() * 2 * Math.PI;
-   sprites.add(new MobileSprite(Math.random() * (width - 50),
-                                Math.random() * (height - 50), 50, 50, "circle.png",
-                                Math.cos(dir), Math.sin(dir)));
-   dir = Math.random() * 2 * Math.PI;
-   sprites.add(new MobileSprite(Math.random() * (width - 50),
-                                Math.random() * (height - 50), 50, 50, "circle.png",
-                                Math.cos(dir), Math.sin(dir)));
-
-    //heavy sprites
+    //charmander
    dir = Math.random() * 2 * Math.PI;
    sprites.add(new HeavySprite(Math.random() * (width - 50),
-                                Math.random() * (height - 50), 50, 50, "1.png",
-                                Math.cos(dir), Math.sin(dir)));
-   dir = Math.random() * 2 * Math.PI;
-   sprites.add(new HeavySprite(Math.random() * (width - 50),
-                                Math.random() * (height - 50), 50, 50, "triangle.png",
-                                Math.cos(dir), Math.sin(dir)));
-  }
-  
+                                Math.random() * (height - 50), 38, 42, "1.png",
+                                0, Math.sin(dir)));  }
   public void stepAll()
   {
     for (int i = 0; i < sprites.size(); i++)
@@ -91,14 +74,37 @@ public class World
   
   public void keyPressed(int key)
   {
-    if(key == 38) {
-        ((HeavySprite)sprites.get(4)).setVY(-3);
+    switch(key) {
+        case 38: {
+            ((HeavySprite)sprites.get(1)).setVY(-3);
+            break;
+        }
+        case 37: {
+            ((MobileSprite)sprites.get(1)).setXY(-3);
+            break;
+        }
+        case 39: {
+            ((MobileSprite)sprites.get(1)).setXY(3);
+            break;
+        }
     }
     System.out.println("keyPressed:  " + key);
   }
   
   public void keyReleased(int key)
   {
+    switch(key) {
+        case 37: {
+            if(((MobileSprite)sprites.get(1)).getXY() < 0)
+                ((MobileSprite)sprites.get(1)).setXY(0);
+            break;
+        }
+        case 39: {
+            if(((MobileSprite)sprites.get(1)).getXY() > 0)
+                ((MobileSprite)sprites.get(1)).setXY(0);
+            break;
+        }
+    }
     System.out.println("keyReleased:  " + key);
   }
   

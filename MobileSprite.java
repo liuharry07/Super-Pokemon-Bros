@@ -21,6 +21,14 @@ public class MobileSprite extends Sprite
   {
     vy = velocityY;
   }
+
+  public double getXY() {
+    return vx;
+  }
+
+  public void setXY(double velocityX) {
+    vx = velocityX;
+  }
   
   public void step(World world)
   {
