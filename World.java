@@ -45,14 +45,14 @@ public class World
                                 Math.cos(dir), Math.sin(dir)));
 
     //heavy sprites
-//    dir = Math.random() * 2 * Math.PI;
-//    sprites.add(new HeavySprite(Math.random() * (width - 50),
-//                                 Math.random() * (height - 50), 50, 50, "triangle.png",
-//                                 Math.cos(dir), Math.sin(dir)));
-//    dir = Math.random() * 2 * Math.PI;
-//    sprites.add(new HeavySprite(Math.random() * (width - 50),
-//                                 Math.random() * (height - 50), 50, 50, "triangle.png",
-//                                 Math.cos(dir), Math.sin(dir)));
+   dir = Math.random() * 2 * Math.PI;
+   sprites.add(new HeavySprite(Math.random() * (width - 50),
+                                Math.random() * (height - 50), 50, 50, "1.png",
+                                Math.cos(dir), Math.sin(dir)));
+   dir = Math.random() * 2 * Math.PI;
+   sprites.add(new HeavySprite(Math.random() * (width - 50),
+                                Math.random() * (height - 50), 50, 50, "triangle.png",
+                                Math.cos(dir), Math.sin(dir)));
   }
   
   public void stepAll()
@@ -60,8 +60,7 @@ public class World
     for (int i = 0; i < sprites.size(); i++)
     {
       Sprite s = sprites.get(i);
-      
-      //insert code here
+      s.step(this);
     }
   }
   
@@ -92,6 +91,9 @@ public class World
   
   public void keyPressed(int key)
   {
+    if(key == 38) {
+        ((HeavySprite)sprites.get(4)).setVY(-3);
+    }
     System.out.println("keyPressed:  " + key);
   }
   
