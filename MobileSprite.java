@@ -22,11 +22,11 @@ public class MobileSprite extends Sprite
     vy = velocityY;
   }
 
-  public double getXY() {
+  public double getVX() {
     return vx;
   }
 
-  public void setXY(double velocityX) {
+  public void setVX(double velocityX) {
     vx = velocityX;
   }
   
