@@ -8,6 +8,6 @@ public class HeavySprite extends MobileSprite
   
   public void step(World world) {
     super.step(world);
-    super.setVY(super.getVY() + 0.1);
+    super.setVY(super.getVY() + 0.2);
   }
 }

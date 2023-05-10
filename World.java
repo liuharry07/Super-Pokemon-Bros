@@ -20,26 +20,29 @@ public class World {
     private HeavySprite player;
     private Sprite stageHitbox;
 
-    private boolean inAir;
+    private int jumps;
 
     public World(int w, int h) {
+        jumps = 0;
         width = w;
         height = h;
-        inAir = true;
         sprites = new ArrayList<Sprite>();
         double dir;
 
-        sprites.add(new Sprite(345, 560, 800, 20, "stagehitbox.png"));
-        //make a hitbox for stage
+        //stage hitbox
+        sprites.add(new Sprite(345, 550, 800, 20, "stagehitbox.png"));
+
+        //platform hitboxes
+        sprites.add(new Sprite(450, 430, 155, 20, "stagehitbox.png"));
+        sprites.add(new Sprite(900, 430, 155, 20, "stagehitbox.png"));
 
         //stage
         sprites.add(new Sprite(300, 200, 900, 600, "stage.png"));
 
         //charmander
-        dir = Math.random() * 2 * Math.PI;
-        sprites.add(new HeavySprite(Math.random() * (width - 50), Math.random() * (height - 50), 38, 42, "1.png", 0, Math.sin(dir)));
+        sprites.add(new HeavySprite(500, 200, 38, 42, "1.png", 0.0, 0.0));
 
-        player = (HeavySprite)sprites.get(2);
+        player = (HeavySprite) sprites.get(sprites.size() - 1);
         stageHitbox = sprites.get(0);
     }
 
@@ -48,13 +51,18 @@ public class World {
             Sprite s = sprites.get(i);
             s.step(this);
         }
-        if((int) (player.getTop() + player.getHeight()) == (int) stageHitbox.getTop()) {
-            if(player.getLeft() > stageHitbox.getLeft()) {
-                if(player.getLeft() < stageHitbox.getLeft() + stageHitbox.getWidth()) {
-                    player.setVY(0);
+        for(int i = 0; i < 3; ++i) {
+            if((int) (player.getTop() + player.getHeight()) >= (int) sprites.get(i).getTop() && (int) (player.getTop() + player.getHeight()) < (int) (sprites.get(i).getTop() + 10)) {
+                if(player.getLeft() > sprites.get(i).getLeft()) {
+                    if(player.getLeft() < sprites.get(i).getLeft() + sprites.get(i).getWidth()) {
+                        player.setVY(0);
+                        jumps = 0;
+                        player.setTop(sprites.get(i).getTop() - player.getHeight());
+                    }
                 }
             }
         }
+
     }
 
     public int getWidth() {
@@ -80,8 +88,10 @@ public class World {
     public void keyPressed(int key) {
         switch(key) {
             case 38: {
-                player.setVY(-3);
-                inAir = true;
+                if(jumps < 2) {
+                    player.setVY(-5);
+                    ++jumps;
+                }
                 break;
             }
             case 37: {
