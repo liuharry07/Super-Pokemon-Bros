@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
@@ -23,15 +22,26 @@ public class World {
     private HeavySprite player;
     private Sprite stageHitbox;
 
-    private int runAnimation;
-    private int standAnimation;
-    private boolean isRunning;
+    private double score1;
+    private double score2;
 
+    private JLabel scorelabelp1;
+    private JLabel scorelabelp2;
+
+    private double runAnimation;
+    private int standAnimation;
+
+    private boolean isMoving;
+
+    private int direction;
+
+    private final int LEFT = 0;
+    private final int RIGHT = 1;
     private int jumps;
 
     public World(int w, int h) {
         runAnimation = 0;
-        isRunning = false;
+        isMoving = false;
         jumps = 0;
         width = w;
         height = h;
@@ -39,6 +49,14 @@ public class World {
 
         //stage hitbox
         sprites.add(new Sprite(345, 550, 800, 20, "stagehitbox.png"));
+
+        /*
+         * scorelabelp1.setBounds(50, 50, 100, 100);
+         * scorelabelp1.setText("00%");
+         * 
+         * scorelabelp2.setBounds(750, 50, 100, 100);
+         * scorelabelp2.setText("00%");
+         */
 
         //platform hitboxes
         sprites.add(new Sprite(450, 430, 155, 20, "stagehitbox.png"));
@@ -70,10 +88,11 @@ public class World {
                 }
             }
         }
-        if(isRunning) {
-            player.setImage("run" + runAnimation % 8 + ".png");
+        if(isMoving) {
+            runAnimation += 0.18;
+            player.setImage("run" + direction + "_" + (int) (runAnimation % 8) + ".png");
             try {
-                BufferedImage temp = ImageIO.read(new File("run" + runAnimation % 8 + ".png"));
+                BufferedImage temp = ImageIO.read(new File("run" + direction + "_" + (int) (runAnimation % 8) + ".png"));
                 player.setHeight((int) (temp.getHeight() * 1.2));
                 player.setWidth((int) (temp.getWidth() * 1.2));
             } catch (IOException e) {
@@ -81,18 +100,18 @@ public class World {
             }
         }
         /*
-        else {
-            player.setImage("stand" + standAnimation % 6 + ".png");
-            try {
-                BufferedImage temp = ImageIO.read(new File("stand0.png"));
-                player.setHeight((int) (temp.getHeight() * 1.2));
-                player.setWidth((int) (temp.getWidth() * 1.2));
-                player.setTop(player.getTop() - 5);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        */
+         * else {
+         * player.setImage("stand" + standAnimation % 6 + ".png");
+         * try {
+         * BufferedImage temp = ImageIO.read(new File("stand0.png"));
+         * player.setHeight((int) (temp.getHeight() * 1.2));
+         * player.setWidth((int) (temp.getWidth() * 1.2));
+         * player.setTop(player.getTop() - 5);
+         * } catch (IOException e) {
+         * e.printStackTrace();
+         * }
+         * }
+         */
     }
 
     public int getWidth() {
@@ -126,14 +145,14 @@ public class World {
             }
             case 37: {
                 player.setVX(-3);
-                isRunning = true;;
-                ++runAnimation;
+                isMoving = true;
+                direction = LEFT;
                 break;
             }
             case 39: {
                 player.setVX(3);
-                isRunning = true;;
-                ++runAnimation;
+                isMoving = true;
+                direction = RIGHT;
                 break;
             }
         }
@@ -145,13 +164,13 @@ public class World {
             case 37: {
                 if(player.getVX() < 0)
                     player.setVX(0);
-                isRunning = false;
+                isMoving = false;
                 break;
             }
             case 39: {
                 if(player.getVX() > 0)
                     player.setVX(0);
-                isRunning = false;
+                isMoving = false;
                 break;
             }
         }
