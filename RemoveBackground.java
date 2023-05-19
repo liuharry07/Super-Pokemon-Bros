@@ -7,14 +7,14 @@ public class RemoveBackground {
     public static void main(String[] args) {
         BufferedImage img = null;
         try {
-            img = ImageIO.read(new File("sprites.png"));
+            img = ImageIO.read(new File("squirtlespritesheet.png"));
         } catch (IOException e) {
         }
         Color remove = new Color(img.getRGB(0, 0));
         for(int i = 0; i < img.getWidth(); ++i) {
             for(int j = 0; j < img.getHeight(); ++j) {
                 if(new Color(img.getRGB(i, j)).equals(remove)) {
-                   img.setRGB(i, j, 0);
+                    img.setRGB(i, j, 0);
                 }
             }
         }
