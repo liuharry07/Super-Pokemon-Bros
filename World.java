@@ -3,7 +3,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import javax.imageio.ImageIO;
-import javax.swing.*;
 
 public class World {
     public static void main(String[] args) {
@@ -26,8 +25,7 @@ public class World {
     private Sprite[] playerHitboxes;
     private Sprite[][] attackHitboxes;
 
-    private double score1;
-    private double score2;
+    private double[] score;
 
     private Sprite p1Label;
     private Sprite p2Label;
@@ -35,11 +33,14 @@ public class World {
     private double[] runAnimation;
     private double[] standAnimation;
     private double[] attackAnimation;
+    private double[] hurtAnimation;
     private int[][] animationFrames;
 
     private boolean[] isMoving;
 
     private boolean[] attack;
+    private boolean[] hurt;
+    private boolean[] dealDamage;
 
     private int[] direction;
     private final int LEFT = 0;
@@ -51,6 +52,7 @@ public class World {
         runAnimation = new double[2];
         standAnimation = new double[2];
         attackAnimation = new double[2];
+        hurtAnimation = new double[2];
         animationFrames = new int[2][3];
         animationFrames[0][0] = 6;
         animationFrames[0][1] = 8;
@@ -63,6 +65,8 @@ public class World {
         direction = new int[2];
         jumps = new int[2];
         attack = new boolean[2];
+        dealDamage = new boolean[2];
+        hurt = new boolean[2];
 
         width = w;
         height = h;
@@ -76,8 +80,7 @@ public class World {
         sprites.add(new Sprite(345, 550, 800, 20, "hitbox.png", 0));
 
         //score
-        score1 = 0.0;
-        score2 = 0.0;
+        score = new double[2];
 
         //platform hitboxes
         sprites.add(new Sprite(450, 430, 155, 20, "hitbox.png", 0));
@@ -103,8 +106,8 @@ public class World {
         attackHitboxes[1][1] = sprites.get(sprites.size() - 1);
 
         //players
-        sprites.add(new HeavySprite(500, 100, 0, 0, "1/stand0_0.png", 0.0, 0.0, 1));
-        sprites.add(new HeavySprite(700, 100, 0, 0, "1/stand0_0.png", 0.0, 0.0, 2));
+        sprites.add(new HeavySprite(500, 100, 0, 0, "1/stand0_0.png", 0.0, 0.0, CHARMANDER));
+        sprites.add(new HeavySprite(700, 100, 0, 0, "1/stand0_0.png", 0.0, 0.0, SQUIRTLE));
         players[0] = (HeavySprite) sprites.get(sprites.size() - 2);
         players[1] = (HeavySprite) sprites.get(sprites.size() - 1);
 
@@ -166,64 +169,99 @@ public class World {
 
         //animation code
         for(int i = 0; i < 2; ++i) {
-            if(isMoving[i]) {
-                //run animation
-                runAnimation[i] += 0.18;
-                int ph = players[i].getHeight();
-                players[i].setImage(players[i].getType() + "/run" + direction[i] + "_" + (int) (runAnimation[i] % animationFrames[i][1]) + ".png");
-                try {
-                    BufferedImage temp = ImageIO.read(new File(players[i].getType() + "/run" + direction[i] + "_" + (int) (runAnimation[i] % animationFrames[i][1]) + ".png"));
-                    players[i].setHeight((int) (temp.getHeight() * 1.2));
-                    players[i].setWidth((int) (temp.getWidth() * 1.2));
-                } catch (IOException e) {
-                    e.printStackTrace();
+            if(hurt[i]) {
+                hurtAnimation[i] += 0.1;
+                if(hurtAnimation[i] < 2.0) {
+                    players[i].setImage(players[i].getType() + "/hurt.png");
                 }
-                players[i].setTop(players[i].getTop() - (players[i].getHeight() - ph) / 2);
-
+                else {
+                    hurtAnimation[i] = 0.0;
+                    hurt[i] = false;
+                }
             }
             else {
-                //stand animation
-                standAnimation[i] += 0.1;
-                int ph = players[i].getHeight();
-                players[i].setImage(players[i].getType() + "/stand" + direction[i] + "_" + (int) (standAnimation[i] % animationFrames[i][0]) + ".png");
-                try {
-                    BufferedImage temp = ImageIO.read(new File(players[i].getType() + "/stand" + direction[i] + "_" + (int) (standAnimation[i] % animationFrames[i][0]) + ".png"));
-                    players[i].setHeight((int) (temp.getHeight() * 1.2));
-                    players[i].setWidth((int) (temp.getWidth() * 1.2));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                players[i].setTop(players[i].getTop() - (players[i].getHeight() - ph) / 2);
-
-            }
-            if(attack[i]) {
-                //attack animation;
-                attackAnimation[i] += 0.18;
-                int ph = players[i].getHeight();
-                if((int) (attackAnimation[i] / animationFrames[i][2]) != 1) {
-                    players[i].setImage(players[i].getType() + "/attack" + direction[i] + "_" + (int) (attackAnimation[i] % animationFrames[i][2]) + ".png");
+                if(isMoving[i]) {
+                    //run animation
+                    runAnimation[i] += 0.18;
+                    int ph = players[i].getHeight();
+                    players[i].setImage(players[i].getType() + "/run" + direction[i] + "_" + (int) (runAnimation[i] % animationFrames[i][1]) + ".png");
                     try {
-                        BufferedImage temp = ImageIO.read(new File(players[i].getType() + "/attack" + direction[i] + "_" + (int) (attackAnimation[i] % animationFrames[i][2]) + ".png"));
+                        BufferedImage temp = ImageIO.read(new File(players[i].getType() + "/run" + direction[i] + "_" + (int) (runAnimation[i] % animationFrames[i][1]) + ".png"));
                         players[i].setHeight((int) (temp.getHeight() * 1.2));
                         players[i].setWidth((int) (temp.getWidth() * 1.2));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    players[i].setTop(players[i].getTop() - (players[i].getHeight() - ph) / 2);
+
                 }
                 else {
-                    attackAnimation[i] = 0;
-                    attack[i] = false;
+                    //stand animation
+                    standAnimation[i] += 0.1;
+                    int ph = players[i].getHeight();
+                    players[i].setImage(players[i].getType() + "/stand" + direction[i] + "_" + (int) (standAnimation[i] % animationFrames[i][0]) + ".png");
+                    try {
+                        BufferedImage temp = ImageIO.read(new File(players[i].getType() + "/stand" + direction[i] + "_" + (int) (standAnimation[i] % animationFrames[i][0]) + ".png"));
+                        players[i].setHeight((int) (temp.getHeight() * 1.2));
+                        players[i].setWidth((int) (temp.getWidth() * 1.2));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    players[i].setTop(players[i].getTop() - (players[i].getHeight() - ph) / 2);
+
                 }
-                players[i].setTop(players[i].getTop() - (players[i].getHeight() - ph) / 2);
+                if(attack[i]) {
+                    //attack animation;
+                    attackAnimation[i] += 0.18;
+                    int ph = players[i].getHeight();
+                    if((int) (attackAnimation[i] / animationFrames[i][2]) != 1) {
+                        players[i].setImage(players[i].getType() + "/attack" + direction[i] + "_" + (int) (attackAnimation[i] % animationFrames[i][2]) + ".png");
+                        try {
+                            BufferedImage temp = ImageIO.read(new File(players[i].getType() + "/attack" + direction[i] + "_" + (int) (attackAnimation[i] % animationFrames[i][2]) + ".png"));
+                            players[i].setHeight((int) (temp.getHeight() * 1.2));
+                            players[i].setWidth((int) (temp.getWidth() * 1.2));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else {
+                        attackAnimation[i] = 0;
+                        attack[i] = false;
+                    }
+                    players[i].setTop(players[i].getTop() - (players[i].getHeight() - ph) / 2);
+                }
             }
         }
-        /*
+
         for(int i = 0; i < 2; ++i) {
-            if(attack[i]) {
-                attackHitboxes[i][0].setLeft(i);
+            if(attack[i] && !hurt[i]) {
+                if(direction[i] == LEFT) {
+                    attackHitboxes[i][0].setHeight(20);
+                    attackHitboxes[i][0].setWidth(20);
+                    attackHitboxes[i][0].setLeft(players[i].getLeft() - attackHitboxes[i][0].getWidth() / 2);
+                    attackHitboxes[i][0].setTop(players[i].getTop() + attackHitboxes[i][0].getHeight() / 2);
+                }
+                else if(direction[i] == RIGHT) {
+                    attackHitboxes[i][0].setHeight(20);
+                    attackHitboxes[i][0].setWidth(20);
+                    attackHitboxes[i][0].setLeft(players[i].getLeft() + players[i].getWidth() - attackHitboxes[i][0].getWidth() / 2);
+                    attackHitboxes[i][0].setTop(players[i].getTop() + attackHitboxes[i][0].getHeight() / 2);
+                }
+                if(touching(attackHitboxes[i][0], playerHitboxes[(i + 1) % 2]) && dealDamage[i]) {
+                    score[i] += 10.0;
+                    dealDamage[i] = false;
+                    hurt[(i + 1) % 2] = true;
+                }
+            }
+            else {
+                attackHitboxes[i][0].setHeight(0);
+                attackHitboxes[i][0].setWidth(0);
             }
         }
-        */
+    }
+
+    public boolean touching(Sprite a, Sprite b) {
+        return a.getTop() < b.getTop() + b.getHeight() && a.getTop() + a.getHeight() > b.getTop() && a.getLeft() < b.getLeft() + b.getWidth() && a.getLeft() + a.getWidth() > b.getLeft();
     }
 
     public int getWidth() {
@@ -249,52 +287,64 @@ public class World {
     public void keyPressed(int key) {
         switch(key) {
             case 38: {
-                if(jumps[0] < 2) {
+                if(jumps[0] < 2 && !hurt[0]) {
                     players[0].setVY(-5);
                     ++jumps[0];
                 }
                 break;
             }
             case 37: {
-                if(!attack[0]) {//fix later
+                if(!hurt[0]) {//fix later
                     players[0].setVX(-3);
                     isMoving[0] = true;
-                    direction[0] = LEFT;
-                }
+                    if(!attack[0])
+                        direction[0] = LEFT;
+                }   
                 break;
             }
             case 39: {
-                if(!attack[0]) {//fix later
+                if(!hurt[0]) {//fix later
                     players[0].setVX(3);
                     isMoving[0] = true;
-                    direction[0] = RIGHT;
+                    if(!attack[0])
+                        direction[0] = RIGHT;
                 }
                 break;
             }
             case 44: {
+                if(!attack[0] && !hurt[0])
+                    dealDamage[0] = true;
                 attack[0] = true;
                 break;
             }
             case 87: {
-                if(jumps[1] < 2) {
+                if(jumps[1] < 2 && !hurt[1]) {
                     players[1].setVY(-5);
                     ++jumps[1];
                 }
                 break;
             }
             case 65: {
-                players[1].setVX(-3);
-                isMoving[1] = true;
-                direction[1] = LEFT;
+                if(!hurt[1]) {
+                    players[1].setVX(-3);
+                    isMoving[1] = true;
+                    if(!attack[0])
+                        direction[1] = LEFT;
+                }
                 break;
             }
             case 68: {
-                players[1].setVX(3);
-                isMoving[1] = true;
-                direction[1] = RIGHT;
+                if(!hurt[1]) {
+                    players[1].setVX(3);
+                    isMoving[1] = true;
+                    if(!attack[0])
+                        direction[1] = RIGHT;
+                }
                 break;
             }
             case 70: {
+                if(!attack[1] && !hurt[1])
+                    dealDamage[1] = true;
                 attack[1] = true;
                 break;
             }
@@ -347,8 +397,8 @@ public class World {
         //damage text
         g.setColor(new Color(0, 0, 255));
         g.setFont(new Font("TimesRoman", Font.BOLD, 40));
-        g.drawString(score1 + "%", 450, 750);
+        g.drawString(score[0] + "%", 450, 750);
         g.setColor(new Color(255, 0, 0));
-        g.drawString(score2 + "%", 850, 750);
+        g.drawString(score[1] + "%", 850, 750);
     }
 }
