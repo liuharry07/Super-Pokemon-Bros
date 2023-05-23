@@ -282,7 +282,7 @@ public class World {
             }
             else
             {
-                blockHitboxes[i].setwidth(0);
+                blockHitboxes[i].setWidth(0);
                 blockHitboxes[i].setHeight(0);
             }
         }
@@ -418,6 +418,7 @@ public class World {
             case 32: {
                 if(!block[0])
                     block[0] = true;
+                break;
             }
             case 87: {
                 if(jumps[1] < 2 && !hurt[1]) {
@@ -482,6 +483,7 @@ public class World {
             }
             case 32: {
                 block[0] = false;
+                break;
             }
         }
         System.out.println("keyReleased:  " + key);
