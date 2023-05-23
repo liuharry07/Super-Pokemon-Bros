@@ -24,8 +24,10 @@ public class World {
 
     private Sprite[] playerHitboxes;
     private Sprite[][] attackHitboxes;
+    private Sprite[] blockHitboxes;
 
     private double[] score;
+    private int[] lives;
 
     private Sprite p1Label;
     private Sprite p2Label;
@@ -33,15 +35,17 @@ public class World {
     private double[] runAnimation;
     private double[] standAnimation;
     private double[] attackAnimation;
+    private double[] rangedAttackAnimation;
     private double[] hurtAnimation;
     private int[][] animationFrames;
 
     private boolean[] isMoving;
 
     private boolean[] attack;
+    private boolean[] rangedAttack;
     private boolean[] hurt;
     private boolean[] dealDamage;
-
+    private boolean[] block;
     private int[] direction;
     private final int LEFT = 0;
     private final int RIGHT = 1;
@@ -52,21 +56,30 @@ public class World {
         runAnimation = new double[2];
         standAnimation = new double[2];
         attackAnimation = new double[2];
+        rangedAttackAnimation = new double[2];
         hurtAnimation = new double[2];
-        animationFrames = new int[2][3];
+        animationFrames = new int[2][4];
         animationFrames[0][0] = 6;
         animationFrames[0][1] = 8;
         animationFrames[0][2] = 10;
+        animationFrames[0][3] = 10;
         animationFrames[1][0] = 6;
         animationFrames[1][1] = 6;
         animationFrames[1][2] = 8;
+        animationFrames[1][3] = 8;
 
         isMoving = new boolean[2];
         direction = new int[2];
         jumps = new int[2];
         attack = new boolean[2];
+        rangedAttack = new boolean[2];
         dealDamage = new boolean[2];
         hurt = new boolean[2];
+        lives = new int[2];
+        block = new boolean[2];
+        for(int i = 0; i < 2; ++i) {
+            lives[i] = 3;
+        }
 
         width = w;
         height = h;
@@ -75,6 +88,7 @@ public class World {
         players = new HeavySprite[2];
         playerHitboxes = new Sprite[2];
         attackHitboxes = new Sprite[2][2];
+        blockHitboxes = new Sprite[2];
 
         //stage hitbox
         sprites.add(new Sprite(345, 550, 800, 20, "hitbox.png", 0));
@@ -104,6 +118,12 @@ public class World {
         sprites.add(new Sprite(0, 0, 0, 0, "hitbox.png", 0));
         attackHitboxes[1][0] = sprites.get(sprites.size() - 2);
         attackHitboxes[1][1] = sprites.get(sprites.size() - 1);
+
+        //block hitboxes
+        sprites.add(new Sprite(0, 0, 0, 0, "hitbox.png", 0));
+        sprites.add(new Sprite(0, 0, 0, 0, "hitbox.png", 0));
+        blockHitboxes[0] = sprites.get(sprites.size() - 2);
+        blockHitboxes[1] = sprites.get(sprites.size() - 1);
 
         //players
         sprites.add(new HeavySprite(500, 100, 0, 0, "1/stand0_0.png", 0.0, 0.0, CHARMANDER));
@@ -230,9 +250,29 @@ public class World {
                     }
                     players[i].setTop(players[i].getTop() - (players[i].getHeight() - ph) / 2);
                 }
+                if(rangedAttack[i]) {
+                    rangedAttackAnimation[i] += 0.18;
+                    int ph = players[i].getHeight();
+                    if((int) (rangedAttackAnimation[i] / animationFrames[i][3]) != 1) {
+                        players[i].setImage(players[i].getType() + "/ranged" + direction[i] + "_" + (int) (rangedAttackAnimation[i] % animationFrames[i][3]) + ".png");
+                        try {
+                            BufferedImage temp = ImageIO.read(new File(players[i].getType() + "/ranged" + direction[i] + "_" + (int) (rangedAttackAnimation[i] % animationFrames[i][3]) + ".png"));
+                            players[i].setHeight((int) (temp.getHeight() * 1.2));
+                            players[i].setWidth((int) (temp.getWidth() * 1.2));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else {
+                        rangedAttackAnimation[i] = 0;
+                        rangedAttack[i] = false;
+                    }
+                    players[i].setTop(players[i].getTop() - (players[i].getHeight() - ph) / 2);
+                }
             }
         }
 
+        //attack stuff
         for(int i = 0; i < 2; ++i) {
             if(attack[i] && !hurt[i]) {
                 if(direction[i] == LEFT) {
@@ -248,7 +288,7 @@ public class World {
                     attackHitboxes[i][0].setTop(players[i].getTop() + attackHitboxes[i][0].getHeight() / 2);
                 }
                 if(touching(attackHitboxes[i][0], playerHitboxes[(i + 1) % 2]) && dealDamage[i]) {
-                    score[i] += 10.0;
+                    score[(i + 1) % 2] += 10.0;
                     dealDamage[i] = false;
                     hurt[(i + 1) % 2] = true;
                 }
@@ -257,6 +297,48 @@ public class World {
                 attackHitboxes[i][0].setHeight(0);
                 attackHitboxes[i][0].setWidth(0);
             }
+        }
+
+        //block thingy
+        for(int i = 0; i < 2; i++) {
+            if(block[i]) {
+                blockHitboxes[i].setHeight(players[i].getHeight() + 10);
+                blockHitboxes[i].setWidth(players[i].getWidth() + 20);
+                blockHitboxes[i].setLeft(players[i].getLeft() - 10);
+                blockHitboxes[i].setTop(players[i].getTop() - 10);
+            }
+        }
+
+        //ranged attack
+        for(int i = 0; i < 2; ++i) {
+
+        }
+
+        for(int i = 0; i < 2; ++i) {
+            if(hurt[i]) {
+                if(direction[(i + 1) % 2] == LEFT) {
+                    players[i].setLeft(players[i].getLeft() + score[i] / 100.0 * -10.0);//works good enough - exponential???
+                }
+                else {
+                    players[i].setLeft(players[i].getLeft() + score[i] / 100.0 * 10.0);
+                }
+            }
+        }
+
+        //losing
+        for(int i = 0; i < 2; i++) {
+            if(players[i].getTop() + players[i].getHeight() + 1 >= getHeight()) {
+                players[i].setLeft(400);
+                players[i].setTop(200);
+                players[i].setVY(0.0);
+                score[i] = 0.0;
+                --lives[i];
+            }
+        }
+
+        for(int i = 0; i < 2; i++) {
+            if(lives[i] == 0)
+                System.out.println("Game Over player " + (i + 1) + " lost");
         }
     }
 
@@ -299,7 +381,7 @@ public class World {
                     isMoving[0] = true;
                     if(!attack[0])
                         direction[0] = LEFT;
-                }   
+                }
                 break;
             }
             case 39: {
@@ -316,6 +398,10 @@ public class World {
                     dealDamage[0] = true;
                 attack[0] = true;
                 break;
+            }
+            case 32: {
+                if(!block[0])
+                    block[0] = true;
             }
             case 87: {
                 if(jumps[1] < 2 && !hurt[1]) {
@@ -378,6 +464,9 @@ public class World {
                 isMoving[1] = false;
                 break;
             }
+            case 32: {
+                
+            }
         }
         System.out.println("keyReleased:  " + key);
     }
@@ -397,8 +486,21 @@ public class World {
         //damage text
         g.setColor(new Color(0, 0, 255));
         g.setFont(new Font("TimesRoman", Font.BOLD, 40));
-        g.drawString(score[0] + "%", 450, 750);
+        g.drawString(score[1] + "%", 450, 750);
         g.setColor(new Color(255, 0, 0));
-        g.drawString(score[1] + "%", 850, 750);
+        g.drawString(score[0] + "%", 850, 750);
     }
 }
+
+//gameover screen
+//game beginning - rules
+//block
+//respawn
+//ranged attacks
+//change keys
+//platform bottom fix thing
+//fix hit stuff
+//fix text to look better
+//fix attack so you can't wiggle
+
+//zooming and scrolling
