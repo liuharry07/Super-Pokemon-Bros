@@ -6,10 +6,10 @@ import javax.imageio.ImageIO;
 
 public class FlipImage {
     public static void main(String[] args) {
-        for(int i = 0; i < 6; ++i) {
+        for(int i = 0; i < 8; ++i) {
             BufferedImage img = null;
             try {
-                img = ImageIO.read(new File("2/stand" + "0_" + i + ".png"));
+                img = ImageIO.read(new File("2/ranged" + "0_" + i + ".png"));
             } catch (IOException e) {
             }
             AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
@@ -17,7 +17,7 @@ public class FlipImage {
             AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
             img = op.filter(img, null);
             try {
-                ImageIO.write(img, "png", new File("2/stand" + "1_" + i + ".png"));
+                ImageIO.write(img, "png", new File("2/ranged" + "1_" + i + ".png"));
             } catch (IOException e) {
             }
         }
