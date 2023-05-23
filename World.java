@@ -271,6 +271,21 @@ public class World {
                 }
             }
         }
+        
+        //block thingy
+        for(int i = 0; i < 2; i++) {
+            if(block[i]) {
+                blockHitboxes[i].setHeight(players[i].getHeight() + 10);
+                blockHitboxes[i].setWidth(players[i].getWidth() + 20);
+                blockHitboxes[i].setLeft(players[i].getLeft() - 10);
+                blockHitboxes[i].setTop(players[i].getTop() - 10);
+            }
+            else
+            {
+                blockHitboxes[i].setwidth(0);
+                blockHitboxes[i].setHeight(0);
+            }
+        }
 
         //attack stuff
         for(int i = 0; i < 2; ++i) {
@@ -287,7 +302,16 @@ public class World {
                     attackHitboxes[i][0].setLeft(players[i].getLeft() + players[i].getWidth() - attackHitboxes[i][0].getWidth() / 2);
                     attackHitboxes[i][0].setTop(players[i].getTop() + attackHitboxes[i][0].getHeight() / 2);
                 }
-                if(touching(attackHitboxes[i][0], playerHitboxes[(i + 1) % 2]) && dealDamage[i]) {
+                if(i==0)
+                 if(block[1])
+                    dealDamage[i] = false;
+                else
+                    if(i==1)
+                        if(block[0])
+                             dealDamage[i] = false;
+                    
+                else
+                    if(touching(attackHitboxes[i][0], playerHitboxes[(i + 1) % 2]) && dealDamage[i]) {
                     score[(i + 1) % 2] += 10.0;
                     dealDamage[i] = false;
                     hurt[(i + 1) % 2] = true;
@@ -299,15 +323,7 @@ public class World {
             }
         }
 
-        //block thingy
-        for(int i = 0; i < 2; i++) {
-            if(block[i]) {
-                blockHitboxes[i].setHeight(players[i].getHeight() + 10);
-                blockHitboxes[i].setWidth(players[i].getWidth() + 20);
-                blockHitboxes[i].setLeft(players[i].getLeft() - 10);
-                blockHitboxes[i].setTop(players[i].getTop() - 10);
-            }
-        }
+        
 
         //ranged attack
         for(int i = 0; i < 2; ++i) {
@@ -465,7 +481,7 @@ public class World {
                 break;
             }
             case 32: {
-                
+                block[0] = false;
             }
         }
         System.out.println("keyReleased:  " + key);
@@ -502,5 +518,5 @@ public class World {
 //fix hit stuff
 //fix text to look better
 //fix attack so you can't wiggle
-
+//shift stage up to make more center
 //zooming and scrolling
