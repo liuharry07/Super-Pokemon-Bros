@@ -492,12 +492,13 @@ public class World {
 
             }
         }
-        for(int i = 0; i < 2; ++i) {
+        
+        /*for(int i = 0; i < 2; ++i) {
             if(lives[i] == 0) {
                 scoreString[0] = "";
                 scoreString[1] = "";
             }
-        }
+        }*/
     }
 
     public boolean touching(Sprite a, Sprite b) {
@@ -743,7 +744,7 @@ public class World {
                 g.setFont(new Font("TimesRoman", Font.BOLD, 40));
                 g.drawString(scoreString[0], 600, 200);
                 g.setColor(new Color(255, 255, 255));
-                g.drawString(scoreString[0], 750, 200);
+                g.drawString(scoreString[1], 750, 200);
             }
         }
     }
