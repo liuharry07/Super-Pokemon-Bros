@@ -348,9 +348,28 @@ public class World {
             }
         }
 
-        for(int i = 0; i < 2; i++) {
-            if(lives[i] == 0)
-                System.out.println("Game Over player " + (i + 1) + " lost");
+        if(lives[0] == 0)
+        {
+            text box = new text();
+            box.main();
+            lives[0] = 3;
+            players[0].setLeft(500);
+            players[0].setHeight(400);
+            players[0].setVX(0);
+            players[1].setLeft(950);
+            players[1].setHeight(-200);
+            players[1].setVX(0);
+        }
+        if(lives[1] == 0){
+            text2 box = new text2();
+            box.main();
+            lives[1] = 3;
+            players[0].setLeft(500);
+            players[0].setHeight(0);
+            players[0].setVX(0);
+            players[1].setLeft(950);
+            players[1].setHeight(400);
+            players[1].setVX(0);
         }
     }
 
