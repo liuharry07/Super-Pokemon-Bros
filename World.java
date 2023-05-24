@@ -620,7 +620,7 @@ public class World {
 //gameover screen DO IT ON THE SCREEN?
 //game beginning - rules
 //block JUST NEED ANIMATION
-//respawn MAYBE NOT
+//respawn MAYBE NOT;
 //ranged attacks JUST NEED ANIMATION
 //platform bottom fix thing MAYBE NOT
 //fix hit stuff
