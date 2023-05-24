@@ -96,15 +96,20 @@ public class World {
         attackHitboxes = new Sprite[2][2];
         blockHitboxes = new Sprite[2];
 
-        //stage hitbox
-        sprites.add(new Sprite(345, 425, 800, 20, "hitbox.png", 0));
+          //stage hitbox
+        sprites.add(new Sprite(245, 525, 900, 20, "hitbox.png", 0));
 
         //score
         score = new double[2];
 
         //platform hitboxes
-        sprites.add(new Sprite(450, 305, 155, 20, "hitbox.png", 0));
-        sprites.add(new Sprite(900, 305, 155, 20, "hitbox.png", 0));
+        sprites.add(new Sprite(420, 405, 155, 20, "hitbox.png", 0));
+        sprites.add(new Sprite(825, 405, 155, 20, "hitbox.png", 0));
+
+ 
+
+        //stage
+        sprites.add(new Sprite(300, 75, 900, 600, "stage.png", 0));
 
         //player hitboxes
         sprites.add(new Sprite(0, 0, 0, 0, "hitbox.png", 0));
@@ -197,7 +202,7 @@ public class World {
         //platform code
         for(int i = 0; i < 3; ++i) {
             for(int j = 0; j < 2; ++j) {
-                if((int) (players[j].getTop() + players[j].getHeight()) >= (int) sprites.get(i).getTop() && (int) (players[j].getTop() + players[j].getHeight()) < (int) (sprites.get(i).getTop() + 11)) {
+                if((int) (players[j].getTop() + players[j].getHeight()) >= (int) sprites.get(i).getTop() && (int) (players[j].getTop() + players[j].getHeight()) < (int) (sprites.get(i).getTop() + 12)) {
                     if(players[j].getLeft() > sprites.get(i).getLeft()) {
                         if(players[j].getLeft() < sprites.get(i).getLeft() + sprites.get(i).getWidth()) {
                             players[j].setVY(0);
