@@ -448,7 +448,7 @@ public class World {
                 }
                 break;
             }
-            case 16: {
+            case 20: {
                 if(!attack[1] && !hurt[1])
                     dealDamage[1] = true;
                 attack[1] = true;
@@ -503,8 +503,8 @@ public class World {
         System.out.println("keyReleased:  " + key);
     }
     // Changed keys
-    // squirtle I made attack shift and made sheild S
-    // Charzard I made jump P, left L, right quotation key, attack I think the other shift, and shielf semicolan
+    // squirtle I made attack caps-lock and made sheild S
+    // Charzard I made jump P, left L, right quotation key, attack the enter key, and shielf semicolan
 
     public String getTitle() {
         return "World";
