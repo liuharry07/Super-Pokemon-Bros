@@ -50,6 +50,7 @@ public class World {
     private boolean[] hurt;
     private boolean[] dealDamage;
     private boolean[] block;
+    private int[] blockTime;
     private int[] direction;
     private int[] rangedAttackDirection;
     private final int LEFT = 0;
@@ -58,7 +59,6 @@ public class World {
     private int[] jumps;
 
     public World(int w, int h) {
-        text3 box3 = new text3();
         runAnimation = new double[2];
         standAnimation = new double[2];
         attackAnimation = new double[2];
@@ -84,6 +84,7 @@ public class World {
         hurt = new boolean[2];
         lives = new int[2];
         block = new boolean[2];
+        blockTime = new int[2];
         for(int i = 0; i < 2; ++i) {
             lives[i] = 3;
         }
@@ -96,7 +97,7 @@ public class World {
         attackHitboxes = new Sprite[2][2];
         blockHitboxes = new Sprite[2];
 
-          //stage hitbox
+        //stage hitbox
         sprites.add(new Sprite(245, 525, 900, 20, "hitbox.png", 0));
 
         //score
@@ -105,11 +106,6 @@ public class World {
         //platform hitboxes
         sprites.add(new Sprite(420, 405, 155, 20, "hitbox.png", 0));
         sprites.add(new Sprite(825, 405, 155, 20, "hitbox.png", 0));
-
- 
-
-        //stage
-        sprites.add(new Sprite(300, 75, 900, 600, "stage.png", 0));
 
         //player hitboxes
         sprites.add(new Sprite(0, 0, 0, 0, "hitbox.png", 0));
@@ -190,6 +186,7 @@ public class World {
         for(int i = 3; i >= 1; i--) {
             p2LivesSprites.add(sprites.size() - i);
         }
+        text3 box3 = new text3();
         box3.main();
     }
 
@@ -315,15 +312,17 @@ public class World {
 
         //block thingy
         for(int i = 0; i < 2; i++) {
-            if(block[i]) {
+            if(block[i] && blockTime[i]<= 50) {
                 blockHitboxes[i].setHeight(players[i].getHeight() + 10);
                 blockHitboxes[i].setWidth(players[i].getWidth() + 20);
                 blockHitboxes[i].setLeft(players[i].getLeft() - 10);
                 blockHitboxes[i].setTop(players[i].getTop() - 10);
+                blockTime[i]++;
             }
             else {
                 blockHitboxes[i].setWidth(0);
                 blockHitboxes[i].setHeight(0);
+                block[i] = false;
             }
         }
 
@@ -528,7 +527,9 @@ public class World {
             }
             case 32: {
                 if(!block[0])
+                {
                     block[0] = true;
+                }
                 break;
             }
             case 87: {
@@ -575,7 +576,9 @@ public class World {
             }
             case 16: {
                 if(!block[1])
+                {
                     block[1] = true;
+                }
                 break;
             }
         }
@@ -610,44 +613,12 @@ public class World {
             }
             case 32: {
                 block[0] = false;
+                blockTime[0] = 0;
                 break;
             }
             case 16: {
                 block[1] = false;
-                break;
-            }
-        }
-        System.out.println("keyReleased:  " + key);
-    }
-
-    public void keyReleased(int key) {
-        switch(key) {
-            case 37: {
-                if(players[0].getVX() < 0)
-                    players[0].setVX(0);
-                isMoving[0] = false;
-                break;
-            }
-            case 39: {
-                if(players[0].getVX() > 0)
-                    players[0].setVX(0);
-                isMoving[0] = false;
-                break;
-            }
-            case 65: {
-                if(players[1].getVX() < 0)
-                    players[1].setVX(0);
-                isMoving[1] = false;
-                break;
-            }
-            case 68: {
-                if(players[1].getVX() > 0)
-                    players[1].setVX(0);
-                isMoving[1] = false;
-                break;
-            }
-            case 32: {
-                block[0] = false;
+                blockTime[1] = 0;
                 break;
             }
         }
