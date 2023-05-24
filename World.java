@@ -488,6 +488,7 @@ public class World {
                 if(jumps[0] < 2 && !hurt[0]) {
                     players[0].setVY(-5);
                     ++jumps[0];
+                    block[0] = false;
                 }
                 break;
             }
@@ -498,6 +499,7 @@ public class World {
                     if(!attack[0])
                         direction[0] = LEFT;
                 }
+                block[0] = false;
                 break;
             }
             case 39: {
@@ -507,18 +509,21 @@ public class World {
                     if(!attack[0])
                         direction[0] = RIGHT;
                 }
+                block[0] = false;
                 break;
             }
             case 44: {
                 if(!attack[0] && !hurt[0])
                     dealDamage[0] = true;
                 attack[0] = true;
+                block[0] = false;
                 break;
             }
             case 46: {
                 if(!rangedAttack[0] && !hurt[0])
                     dealDamage[0] = true;
                 rangedAttack[0] = true;
+                block[0] = false;
                 break;
             }
             case 32: {
@@ -530,6 +535,7 @@ public class World {
                 if(jumps[1] < 2 && !hurt[1]) {
                     players[1].setVY(-5);
                     ++jumps[1];
+                    block[1] = false;
                 }
                 break;
             }
@@ -540,6 +546,7 @@ public class World {
                     if(!attack[0])
                         direction[1] = LEFT;
                 }
+                block[1] = false;
                 break;
             }
             case 68: {
@@ -549,22 +556,68 @@ public class World {
                     if(!attack[0])
                         direction[1] = RIGHT;
                 }
+                block[1] = false;
                 break;
             }
             case 70: {
                 if(!attack[1] && !hurt[1])
                     dealDamage[1] = true;
                 attack[1] = true;
+                block[1] = false;
                 break;
             }
             case 71: {
                 if(!rangedAttack[1] && !hurt[1])
                     dealDamage[1] = true;
                 rangedAttack[1] = true;
+                block[1] = false;
+                break;
+            }
+            case 16: {
+                if(!block[1])
+                    block[1] = true;
                 break;
             }
         }
         System.out.println("keyPressed:  " + key);
+    }
+
+    public void keyReleased(int key) {
+        switch(key) {
+            case 37: {
+                if(players[0].getVX() < 0)
+                    players[0].setVX(0);
+                isMoving[0] = false;
+                break;
+            }
+            case 39: {
+                if(players[0].getVX() > 0)
+                    players[0].setVX(0);
+                isMoving[0] = false;
+                break;
+            }
+            case 65: {
+                if(players[1].getVX() < 0)
+                    players[1].setVX(0);
+                isMoving[1] = false;
+                break;
+            }
+            case 68: {
+                if(players[1].getVX() > 0)
+                    players[1].setVX(0);
+                isMoving[1] = false;
+                break;
+            }
+            case 32: {
+                block[0] = false;
+                break;
+            }
+            case 16: {
+                block[1] = false;
+                break;
+            }
+        }
+        System.out.println("keyReleased:  " + key);
     }
 
     public void keyReleased(int key) {
