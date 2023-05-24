@@ -546,7 +546,7 @@ public class World {
     }
 }
 
-//gameover screen
+//gameover screen, Done-ish
 //game beginning - rules
 //block, DONE
 //respawn
