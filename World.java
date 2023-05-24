@@ -161,7 +161,7 @@ public class World {
         //platform code
         for(int i = 0; i < 3; ++i) {
             for(int j = 0; j < 2; ++j) {
-                if((int) (players[j].getTop() + players[j].getHeight()) >= (int) sprites.get(i).getTop() && (int) (players[j].getTop() + players[j].getHeight()) < (int) (sprites.get(i).getTop() + 10)) {
+                if((int) (players[j].getTop() + players[j].getHeight()) >= (int) sprites.get(i).getTop() && (int) (players[j].getTop() + players[j].getHeight()) < (int) (sprites.get(i).getTop() + 11)) {
                     if(players[j].getLeft() > sprites.get(i).getLeft()) {
                         if(players[j].getLeft() < sprites.get(i).getLeft() + sprites.get(i).getWidth()) {
                             players[j].setVY(0);
@@ -379,114 +379,133 @@ public class World {
     }
 
     public void keyPressed(int key) {
-        switch(key) {
-            case 38: {
-                if(jumps[0] < 2 && !hurt[0]) {
-                    players[0].setVY(-5);
-                    ++jumps[0];
-                }
-                break;
-            }
-            case 37: {
-                if(!hurt[0]) {//fix later
-                    players[0].setVX(-3);
-                    isMoving[0] = true;
-                    if(!attack[0])
-                        direction[0] = LEFT;
-                }
-                break;
-            }
-            case 39: {
-                if(!hurt[0]) {//fix later
-                    players[0].setVX(3);
-                    isMoving[0] = true;
-                    if(!attack[0])
-                        direction[0] = RIGHT;
-                }
-                break;
-            }
-            case 44: {
-                if(!attack[0] && !hurt[0])
-                    dealDamage[0] = true;
-                attack[0] = true;
-                break;
-            }
-            case 32: {
-                if(!block[0])
-                    block[0] = true;
-                break;
-            }
-            case 87: {
-                if(jumps[1] < 2 && !hurt[1]) {
-                    players[1].setVY(-5);
-                    ++jumps[1];
-                }
-                break;
-            }
-            case 65: {
-                if(!hurt[1]) {
-                    players[1].setVX(-3);
-                    isMoving[1] = true;
-                    if(!attack[0])
-                        direction[1] = LEFT;
-                }
-                break;
-            }
-            case 68: {
-                if(!hurt[1]) {
-                    players[1].setVX(3);
-                    isMoving[1] = true;
-                    if(!attack[0])
-                        direction[1] = RIGHT;
-                }
-                break;
-            }
-            case 70: {
-                if(!attack[1] && !hurt[1])
-                    dealDamage[1] = true;
-                attack[1] = true;
-                break;
-            }
-        }
-        System.out.println("keyPressed:  " + key);
-    }
+       switch(key) {
+           case 80: {
+               if(jumps[0] < 2 && !hurt[0]) {
+                   players[0].setVY(-5);
+                   ++jumps[0];
+                   block[0] = false;
+               }
+               break;
+           }
+           case 76: {
+               if(!hurt[0]) {//fix later
+                   players[0].setVX(-3);
+                   isMoving[0] = true;
+                   if(!attack[0])
+                       direction[0] = LEFT;
+                   block[0] = false;
+               }
+               break;
+           }
+           case 222: {
+               if(!hurt[0]) {//fix later
+                   players[0].setVX(3);
+                   isMoving[0] = true;
+                   block[0] = false;
+                   if(!attack[0])
+                       direction[0] = RIGHT;
+               }
+               break;
+           }
+           case 10: {
+               if(!attack[0] && !hurt[0])
+                   dealDamage[0] = true;
+               attack[0] = true;
+               block[0] = false;
+               break;
+           }
+           case 59: {
+               if(!block[0])
+                   block[0] = true;
+               break;
+           }
+           case 87: {
+               if(jumps[1] < 2 && !hurt[1]) {
+                   players[1].setVY(-5);
+                   ++jumps[1];
+                   block[1] = false;
+               }
+               break;
+           }
+           case 65: {
+               if(!hurt[1]) {
+                   players[1].setVX(-3);
+                   isMoving[1] = true;
+                   if(!attack[0])
+                       direction[1] = LEFT;
+                   block[1] = false;
+               }
+               break;
+           }
+           case 68: {
+               if(!hurt[1]) {
+                   players[1].setVX(3);
+                   isMoving[1] = true;
+                   if(!attack[0])
+                       direction[1] = RIGHT;
+                   block[1] = false;
+               }
+               break;
+           }
+           case 16: {
+               if(!attack[1] && !hurt[1])
+                   dealDamage[1] = true;
+               attack[1] = true;
+               block[1] = false;
+               break;
+           }
+           case 83: {
+               if(!block[1])
+                   block[1] = true;
+               break;
+           }
+       }
+       System.out.println("keyPressed:  " + key);
+   }
 
-    public void keyReleased(int key) {
-        switch(key) {
-            case 37: {
-                if(players[0].getVX() < 0)
-                    players[0].setVX(0);
-                isMoving[0] = false;
-                break;
-            }
-            case 39: {
-                if(players[0].getVX() > 0)
-                    players[0].setVX(0);
-                isMoving[0] = false;
-                break;
-            }
-            case 65: {
-                if(players[1].getVX() < 0)
-                    players[1].setVX(0);
-                isMoving[1] = false;
-                break;
-            }
-            case 68: {
-                if(players[1].getVX() > 0)
-                    players[1].setVX(0);
-                isMoving[1] = false;
-                break;
-            }
-            case 32: {
-                block[0] = false;
-                break;
-            }
-        }
-        System.out.println("keyReleased:  " + key);
-    }
 
-    public String getTitle() {
-        return "World";
+   public void keyReleased(int key) {
+       switch(key) {
+           case 76: {
+               if(players[0].getVX() < 0)
+                   players[0].setVX(0);
+               isMoving[0] = false;
+               break;
+           }
+           case 222: {
+               if(players[0].getVX() > 0)
+                   players[0].setVX(0);
+               isMoving[0] = false;
+               break;
+           }
+           case 65: {
+               if(players[1].getVX() < 0)
+                   players[1].setVX(0);
+               isMoving[1] = false;
+               break;
+           }
+           case 68: {
+               if(players[1].getVX() > 0)
+                   players[1].setVX(0);
+               isMoving[1] = false;
+               break;
+           }
+           case 59: {
+               block[0] = false;
+               break;
+           }
+           case 83: {
+               block[1] = false;
+               break;
+           }
+       }
+       System.out.println("keyReleased:  " + key);
+   }
+   // I changed squirtle attack to shift and made squirtle sheild S. For Charzard I made jump P, left L, right quotation key, attack the other shift I think, and I made Charzard 
+
+  ld semi colan.  public String getTitle() {
+        return "Worldei";
     }
 
     public void paintComponent(Graphics g) {
@@ -509,11 +528,11 @@ public class World {
 //gameover screen
 //game beginning - rules
 //block
-//respawn
+/, Done/respawn
 //ranged attacks
 //change keys
-//platform bottom fix thing
-//fix hit stuff
+/, Done/platform bottom fix thing
+/, Done/fix hit stuff
 //fix text to look better
 //fix attack so you can't wiggle
 //shift stage up to make more center
