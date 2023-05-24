@@ -31,6 +31,8 @@ public class World {
 
     private Sprite p1Label;
     private Sprite p2Label;
+    private Sprite p1LifeLabel;
+    private Sprite p2LifeLabel;
 
     private double[] runAnimation;
     private double[] standAnimation;
@@ -38,6 +40,8 @@ public class World {
     private double[] rangedAttackAnimation;
     private double[] hurtAnimation;
     private int[][] animationFrames;
+    private ArrayList<Integer> p1LivesSprites;
+    private ArrayList<Integer> p2LivesSprites;
 
     private boolean[] isMoving;
 
@@ -53,6 +57,7 @@ public class World {
     private int[] jumps;
 
     public World(int w, int h) {
+        text3 box3 = new text3();
         runAnimation = new double[2];
         standAnimation = new double[2];
         attackAnimation = new double[2];
@@ -80,7 +85,6 @@ public class World {
         for(int i = 0; i < 2; ++i) {
             lives[i] = 3;
         }
-
         width = w;
         height = h;
 
@@ -91,17 +95,17 @@ public class World {
         blockHitboxes = new Sprite[2];
 
         //stage hitbox
-        sprites.add(new Sprite(345, 550, 800, 20, "hitbox.png", 0));
+        sprites.add(new Sprite(345, 425, 800, 20, "hitbox.png", 0));
 
         //score
         score = new double[2];
 
         //platform hitboxes
-        sprites.add(new Sprite(450, 430, 155, 20, "hitbox.png", 0));
-        sprites.add(new Sprite(900, 430, 155, 20, "hitbox.png", 0));
+        sprites.add(new Sprite(450, 305, 155, 20, "hitbox.png", 0));
+        sprites.add(new Sprite(900, 305, 155, 20, "hitbox.png", 0));
 
         //stage
-        sprites.add(new Sprite(300, 200, 900, 600, "stage.png", 0));
+        sprites.add(new Sprite(300, 75, 900, 600, "stage.png", 0));
 
         //player hitboxes
         sprites.add(new Sprite(0, 0, 0, 0, "hitbox.png", 0));
@@ -126,13 +130,13 @@ public class World {
         blockHitboxes[1] = sprites.get(sprites.size() - 1);
 
         //players
-        sprites.add(new HeavySprite(500, 100, 0, 0, "1/stand0_0.png", 0.0, 0.0, CHARMANDER));
-        sprites.add(new HeavySprite(700, 100, 0, 0, "1/stand0_0.png", 0.0, 0.0, SQUIRTLE));
+        sprites.add(new HeavySprite(500, -25, 0, 0, "1/stand0_0.png", 0.0, 0.0, CHARMANDER));
+        sprites.add(new HeavySprite(950, -25, 0, 0, "1/stand0_0.png", 0.0, 0.0, SQUIRTLE));
         players[0] = (HeavySprite) sprites.get(sprites.size() - 2);
         players[1] = (HeavySprite) sprites.get(sprites.size() - 1);
 
         //labels
-        p1Label = new Sprite(500, 158, 20, 20, "Player1Label.png", 0);
+        p1Label = new Sprite(500, 33, 20, 20, "Player1Label.png", 0);
         try {
             BufferedImage temp = ImageIO.read(new File("Player1Label.png"));
             p1Label.setHeight((int) (temp.getHeight() / 4));
@@ -140,7 +144,7 @@ public class World {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        p2Label = new Sprite(500, 158, 20, 20, "Player2Label.png", 0);
+        p2Label = new Sprite(500, 33, 20, 20, "Player2Label.png", 0);
         try {
             BufferedImage temp = ImageIO.read(new File("Player2Label.png"));
             p2Label.setHeight((int) (temp.getHeight() / 4));
@@ -150,6 +154,30 @@ public class World {
         }
         sprites.add(p1Label);
         sprites.add(p2Label);
+
+        p1LifeLabel = new Sprite(575, 660, 20, 20, "Charmander face copy.png", 0);
+        sprites.add(p1LifeLabel);
+        p1LifeLabel = new Sprite(600, 660, 20, 20, "Charmander face copy.png", 0);
+        sprites.add(p1LifeLabel);
+        p1LifeLabel = new Sprite(625, 660, 20, 20, "Charmander face copy.png", 0);
+        sprites.add(p1LifeLabel);
+        p1LivesSprites = new ArrayList<Integer>();
+        for(int i=3; i>=1; i--)
+        {
+            p1LivesSprites.add(sprites.size()-i);
+        }
+        p2LifeLabel = new Sprite(835, 660, 20, 20, "Squirtle face.png", 0);
+        sprites.add(p2LifeLabel);
+        p2LifeLabel = new Sprite(860, 660, 20, 20, "Squirtle face.png", 0);
+        sprites.add(p2LifeLabel);
+        p2LifeLabel = new Sprite(885, 660, 20, 20, "Squirtle face.png", 0);
+        sprites.add(p2LifeLabel);
+        p2LivesSprites = new ArrayList<Integer>();
+        for(int i=3; i>=1; i--)
+        {
+            p2LivesSprites.add(sprites.size()-i);
+        }
+        box3.main();
     }
 
     public void stepAll() {
@@ -302,7 +330,7 @@ public class World {
                     attackHitboxes[i][0].setLeft(players[i].getLeft() + players[i].getWidth() - attackHitboxes[i][0].getWidth() / 2);
                     attackHitboxes[i][0].setTop(players[i].getTop() + attackHitboxes[i][0].getHeight() / 2);
                 }
-                 if(i==0 && block[1])
+                if(i==0 && block[1])
                     dealDamage[i] = false;
                 else
                     if(i==1 && block[0])
@@ -340,11 +368,26 @@ public class World {
         //losing
         for(int i = 0; i < 2; i++) {
             if(players[i].getTop() + players[i].getHeight() + 1 >= getHeight()) {
-                players[i].setLeft(400);
-                players[i].setTop(200);
-                players[i].setVY(0.0);
-                score[i] = 0.0;
-                --lives[i];
+                    players[i].setLeft(400);
+                    players[i].setTop(200);
+                    players[i].setVY(0.0);
+                    score[i] = 0.0;
+                    --lives[i];
+                if(i == 0)
+            {
+                sprites.remove(sprites.get(p1LivesSprites.get(p1LivesSprites.size()-1)));
+                p1LivesSprites.remove(p1LivesSprites.size()-1);
+                for(int j=0; j<p2LivesSprites.size(); j++)
+                {
+                    int num = p2LivesSprites.get(j);
+                    p2LivesSprites.set(j,num-1);
+                }
+            }
+                if(i==1)
+                {
+                    sprites.remove(sprites.get(p2LivesSprites.get(p2LivesSprites.size()-1)));
+                p2LivesSprites.remove(p2LivesSprites.size()-1);
+                }
             }
         }
 
@@ -354,10 +397,10 @@ public class World {
             box.main();
             lives[0] = 3;
             players[0].setLeft(500);
-            players[0].setHeight(400);
+            players[0].setHeight(100);
             players[0].setVX(0);
             players[1].setLeft(950);
-            players[1].setHeight(-200);
+            players[1].setHeight(0);
             players[1].setVX(0);
         }
         if(lives[1] == 0){
@@ -368,8 +411,8 @@ public class World {
             players[0].setHeight(0);
             players[0].setVX(0);
             players[1].setLeft(950);
-            players[1].setHeight(400);
-            players[1].setVX(0);
+            players[1].setHeight(100);
+            players[1].setVX(0); 
         }
     }
 
@@ -482,8 +525,7 @@ public class World {
         }
         System.out.println("keyPressed:  " + key);
     }
- 
- 
+
     public void keyReleased(int key) {
         switch(key) {
             case 76: {
@@ -521,9 +563,6 @@ public class World {
         }
         System.out.println("keyReleased:  " + key);
     }
-    // Changed keys
-    // squirtle I made attack caps-lock and made sheild S
-    // Charzard I made jump P, left L, right quotation key, attack the enter key, and shielf semicolan
 
     public String getTitle() {
         return "World";
@@ -538,23 +577,23 @@ public class World {
         }
 
         //damage text
-        g.setColor(new Color(0, 0, 255));
-        g.setFont(new Font("TimesRoman", Font.BOLD, 40));
-        g.drawString(score[1] + "%", 450, 750);
         g.setColor(new Color(255, 0, 0));
-        g.drawString(score[0] + "%", 850, 750);
+        g.setFont(new Font("TimesRoman", Font.BOLD, 40));
+        g.drawString(score[1] + "%", 575, 650);
+        g.setColor(new Color(0, 0, 255));
+        g.drawString(score[0] + "%", 835, 650);
     }
 }
 
-//gameover screen, Done-ish
-//game beginning - rules
-//block, DONE
+//gameover screen, Done
+//game beginning - rules, Done-ish
 //respawn
 //ranged attacks
-//change keys, DONE
-//platform bottom fix thing, DONE
+//change keys, done
+//platform bottom fix thing, done
 //fix hit stuff
-//fix text to look better
+//fix text to look better not mood
 //fix attack so you can't wiggle
 //shift stage up to make more center
 //zooming and scrolling
+
